@@ -49,15 +49,19 @@ typedef struct cpSegmentQueryInfo {
 } cpSegmentQueryInfo;
 
 /// Fast collision filtering type that is used to determine if two objects collide before calling collision or query callbacks.
+/// 碰撞过滤信息。
 typedef struct cpShapeFilter {
 	/// Two objects with the same non-zero group value do not collide.
 	/// This is generally used to group objects in a composite object together to disable self collisions.
+    /// 当前对象所属的组。同组(非0)对象不发生碰撞。
 	cpGroup group;
 	/// A bitmask of user definable categories that this object belongs to.
 	/// The category/mask combinations of both objects in a collision must agree for a collision to occur.
+    /// 当前对象的掩码
 	cpBitmask categories;
 	/// A bitmask of user definable category types that this object object collides with.
 	/// The category/mask combinations of both objects in a collision must agree for a collision to occur.
+    /// 能与当前对象发生碰撞的掩码
 	cpBitmask mask;
 } cpShapeFilter;
 
@@ -82,6 +86,7 @@ CP_EXPORT void cpShapeFree(cpShape *shape);
 /// Update, cache and return the bounding box of a shape based on the body it's attached to.
 CP_EXPORT cpBB cpShapeCacheBB(cpShape *shape);
 /// Update, cache and return the bounding box of a shape with an explicit transformation.
+/// 更新shape的包围盒，缓存在shape->bb中，并返回
 CP_EXPORT cpBB cpShapeUpdate(cpShape *shape, cpTransform transform);
 
 /// Perform a nearest point query. It finds the closest point on the surface of shape to a specific point.

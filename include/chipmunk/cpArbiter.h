@@ -83,14 +83,17 @@ struct cpContactPointSet {
 	int count;
 	
 	/// The normal of the collision.
+    /// 碰撞的方向
 	cpVect normal;
 	
 	/// The array of contact points.
 	struct {
 		/// The position of the contact on the surface of each shape.
+        /// 位于各自shape上的交点。
 		cpVect pointA, pointB;
 		/// Penetration distance of the two shapes. Overlapping means it will be negative.
 		/// This value is calculated as cpvdot(cpvsub(point2, point1), normal) and is ignored by cpArbiterSetContactPointSet().
+        /// 有向距离。如果发生重叠，则距离是负数。
 		cpFloat distance;
 	} points[CP_MAX_CONTACTS_PER_ARBITER];
 };

@@ -260,12 +260,15 @@ cpContactPointSet
 cpShapesCollide(const cpShape *a, const cpShape *b)
 {
 	struct cpContact contacts[CP_MAX_CONTACTS_PER_ARBITER];
+    
+    // 计算碰撞点
 	struct cpCollisionInfo info = cpCollide(a, b, 0, contacts);
 	
 	cpContactPointSet set;
 	set.count = info.count;
 	
-	// cpCollideShapes() may have swapped the contact order. Flip the normal.
+    // cpCollideShapes() may have swapped the contact order. Flip the normal.
+    // cpCollide函数可能会交换a和b的顺序，如果交换了，这里需要进行反转.
 	cpBool swapped = (a != info.a);
 	set.normal = (swapped ? cpvneg(info.n) : info.n);
 	
@@ -276,6 +279,7 @@ cpShapesCollide(const cpShape *a, const cpShape *b)
 		
 		set.points[i].pointA = (swapped ? p2 : p1);
 		set.points[i].pointB = (swapped ? p1 : p2);
+        // 计算带方向的距离。如果发送重叠，则距离是负数。
 		set.points[i].distance = cpvdot(cpvsub(p2, p1), set.normal);
 	}
 	
@@ -303,6 +307,7 @@ cpCircleShapePointQuery(cpCircleShape *circle, cpVect p, cpPointQueryInfo *info)
 	cpFloat r = circle->r;
 	
 	info->shape = (cpShape *)circle;
+    // 计算圆环上的交点
 	info->point = cpvadd(circle->tc, cpvmult(delta, r/d)); // TODO: div/0
 	info->distance = d - r;
 	

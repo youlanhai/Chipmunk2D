@@ -41,6 +41,7 @@
 #define WARN_GJK_ITERATIONS 20
 #define WARN_EPA_ITERATIONS 20
 
+/// 添加一对碰撞点
 static inline void
 cpCollisionInfoPushContact(struct cpCollisionInfo *info, cpVect p1, cpVect p2, cpHashValue hash)
 {
@@ -521,7 +522,8 @@ ContactPoints(const struct Edge e1, const struct Edge e2, const struct ClosestPo
 
 typedef void (*CollisionFunc)(const cpShape *a, const cpShape *b, struct cpCollisionInfo *info);
 
-// Collide circle shapes.
+/// Collide circle shapes.
+/// 判断两个圆相交
 static void
 CircleToCircle(const cpCircleShape *c1, const cpCircleShape *c2, struct cpCollisionInfo *info)
 {
@@ -531,7 +533,9 @@ CircleToCircle(const cpCircleShape *c1, const cpCircleShape *c2, struct cpCollis
 	
 	if(distsq < mindist*mindist){
 		cpFloat dist = cpfsqrt(distsq);
+        // 求得c1到c2的法线
 		cpVect n = info->n = (dist ? cpvmult(delta, 1.0f/dist) : cpv(1.0f, 0.0f));
+        // 将两个交点(沿着半径方向上的点，不是真实交点)放入碰撞信息数组中
 		cpCollisionInfoPushContact(info, cpvadd(c1->tc, cpvmult(n, c1->r)), cpvadd(c2->tc, cpvmult(n, -c2->r)), 0);
 	}
 }
@@ -684,7 +688,7 @@ CollisionError(const cpShape *circle, const cpShape *poly, struct cpCollisionInf
 	cpAssertHard(cpFalse, "Internal Error: Shape types are not sorted.");
 }
 
-
+/// 通过两个 shape类型组合 来决定用哪个函数。index = t1 + t2 * cols
 static const CollisionFunc BuiltinCollisionFuncs[9] = {
 	(CollisionFunc)CircleToCircle,
 	CollisionError,
@@ -698,6 +702,7 @@ static const CollisionFunc BuiltinCollisionFuncs[9] = {
 };
 static const CollisionFunc *CollisionFuncs = BuiltinCollisionFuncs;
 
+/// 计算两个shape的碰撞交点
 struct cpCollisionInfo
 cpCollide(const cpShape *a, const cpShape *b, cpCollisionID id, struct cpContact *contacts)
 {

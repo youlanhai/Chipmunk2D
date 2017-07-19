@@ -99,6 +99,7 @@ struct cpArbiterThread {
 };
 
 struct cpContact {
+    /// 两个碰撞交点
 	cpVect r1, r2;
 	
 	cpFloat nMass, tMass;
@@ -151,10 +152,15 @@ struct cpShapeMassInfo {
 	cpFloat area;
 };
 
+/// shape类型
 typedef enum cpShapeType{
+    /// 圆形
 	CP_CIRCLE_SHAPE,
+    /// 线段
 	CP_SEGMENT_SHAPE,
+    /// 多边形
 	CP_POLY_SHAPE,
+    /// 类型数量
 	CP_NUM_SHAPES
 } cpShapeType;
 
@@ -165,21 +171,26 @@ typedef void (*cpShapeSegmentQueryImpl)(const cpShape *shape, cpVect a, cpVect b
 
 typedef struct cpShapeClass cpShapeClass;
 
+/// shape的类表(虚函数表)
 struct cpShapeClass {
 	cpShapeType type;
 	
+    /// 生成包围盒
 	cpShapeCacheDataImpl cacheData;
 	cpShapeDestroyImpl destroy;
 	cpShapePointQueryImpl pointQuery;
 	cpShapeSegmentQueryImpl segmentQuery;
 };
 
+/// shape“基类”
 struct cpShape {
+    /// 类表。不同类型的shape对应着不同的类表，这里相当于c++的虚函数表
 	const cpShapeClass *klass;
 	
 	cpSpace *space;
 	cpBody *body;
 	struct cpShapeMassInfo massInfo;
+    /// 当前shape的包围盒。每帧会动态计算。
 	cpBB bb;
 	
 	cpBool sensor;
@@ -199,16 +210,21 @@ struct cpShape {
 	cpHashValue hashid;
 };
 
+/// 圆形
 struct cpCircleShape {
 	cpShape shape;
 	
+    /// 圆的中心点。tc是中心点的世界坐标
 	cpVect c, tc;
+    /// 圆的半径
 	cpFloat r;
 };
 
+/// 线段
 struct cpSegmentShape {
 	cpShape shape;
 	
+    /// 起点，重点，垂线（方向向量旋转-90度）
 	cpVect a, b, n;
 	cpVect ta, tb, tn;
 	cpFloat r;
@@ -222,6 +238,7 @@ struct cpSplittingPlane {
 
 #define CP_POLY_SHAPE_INLINE_ALLOC 6
 
+/// 多边形
 struct cpPolyShape {
 	cpShape shape;
 	
